@@ -1,44 +1,62 @@
-.sidebar{
+/* ==========================
+   Sidebar
+========================== */
 
-    width:260px;
-
-    height:100vh;
-
-    background:#D71945;
-
-    color:white;
-
-    position:fixed;
-
-    left:0;
-
-    top:0;
-
-    display:flex;
-
-    flex-direction:column;
-
-    justify-content:space-between;
-
-    box-shadow:3px 0 15px rgba(0,0,0,.2);
-
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    background: #D71945;
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 3px 0 15px rgba(0, 0, 0, 0.2);
 }
+
+/* ==========================
+   Logo
+========================== */
 
 .sidebar-logo{
 
-    padding:35px 20px;
-
     text-align:center;
 
-    border-bottom:1px solid rgba(255,255,255,.2);
+    padding:25px 15px;
+
+    border-bottom:1px solid rgba(255,255,255,.15);
+
+}
+
+.company-logo{
+
+    width:95px;
+
+    height:95px;
+
+    object-fit:contain;
+
+    background:white;
+
+    border-radius:50%;
+
+    padding:8px;
+
+    margin-bottom:15px;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.25);
 
 }
 
 .sidebar-logo h2{
 
-    font-size:30px;
+    font-size:24px;
 
-    letter-spacing:2px;
+    margin-bottom:4px;
+
+    letter-spacing:1px;
 
 }
 
@@ -46,116 +64,95 @@
 
     font-size:13px;
 
-    opacity:.8;
+    opacity:.85;
 
 }
 
-.sidebar ul{
+/* ==========================
+   Menu
+========================== */
 
-    list-style:none;
-
-    padding:20px 0;
-
+.sidebar ul {
+    list-style: none;
+    padding: 20px 0;
+    margin: 0;
+    flex: 1;
 }
 
-.sidebar li{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:15px;
-
-    padding:16px 25px;
-
-    cursor:pointer;
-
-    transition:.3s;
-
-    font-size:16px;
-
+.sidebar li {
+    margin: 0;
 }
 
-.sidebar li:hover{
+/* Navigation Link */
 
-    background:#B3123A;
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 15px;
 
+    width: 100%;
+
+    padding: 15px 25px;
+
+    text-decoration: none;
+    color: white;
+
+    transition: 0.3s;
 }
 
-.sidebar li.active{
+/* Hover */
 
-    background:white;
-
-    color:#D71945;
-
-    border-left:6px solid #F7C948;
-
-    font-weight:bold;
-
+.nav-link:hover {
+    background: #B3123A;
 }
 
-.logout{
+/* Active Page */
 
-    padding:22px;
-
-    display:flex;
-
-    align-items:center;
-
-    gap:15px;
-
-    cursor:pointer;
-
-    background:#B3123A;
-
-    transition:.3s;
-
+.nav-link.active {
+    background: white;
+    color: #D71945;
+    font-weight: bold;
+    border-left: 6px solid #F7C948;
 }
 
-.logout:hover{
+/* Icons */
 
-    background:#8F0F2D;
-
+.nav-link svg {
+    font-size: 18px;
+    min-width: 20px;
 }
 
-.nav-link{
+/* ==========================
+   Logout
+========================== */
 
-    display:flex;
+.logout {
+    display: flex;
+    align-items: center;
+    gap: 15px;
 
-    align-items:center;
+    padding: 18px 25px;
 
-    gap:15px;
+    background: #B3123A;
 
-    text-decoration:none;
+    cursor: pointer;
 
-    color:white;
-
-    width:100%;
-
+    transition: 0.3s;
 }
 
-.nav-link.active{
-
-    color:#F7C948;
-
-    font-weight:bold;
-
+.logout:hover {
+    background: #8F0F2D;
 }
 
-.sidebar li:hover{
+/* ==========================
+   Scrollbar (Optional)
+========================== */
 
-    background:#B3123A;
-
+.sidebar::-webkit-scrollbar {
+    width: 6px;
 }
 
-.sidebar li{
-
-    padding:0;
-
-}
-
-.sidebar li a{
-
-    padding:16px 25px;
-
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.3);
+    border-radius: 10px;
 }

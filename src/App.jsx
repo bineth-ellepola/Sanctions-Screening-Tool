@@ -5,6 +5,7 @@ import CustomerScreening from "./pages/CustomerScreening";
 import BulkUpload from "./pages/BulkUpload";
 import XmlUpload from "./pages/XmlUpload";
 import HighRisk from "./pages/HighRisk";
+import Login from "./pages/Login";
 function App() {
   return (
     <Routes>
@@ -18,10 +19,9 @@ function App() {
 
       <Route path="/xml-upload" element={<XmlUpload />} />
 
-      <Route
-    path="/high-risk"
-    element={<HighRisk />}
-/>
+      <Route path="/high-risk" element={<HighRisk />} />
+
+      <Route path="/login" element={<Login />} />
     </Routes>
   );
 }
