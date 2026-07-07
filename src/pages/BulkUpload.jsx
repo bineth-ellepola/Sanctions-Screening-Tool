@@ -1,6 +1,4 @@
 import { useState } from "react";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
 import "../styles/BulkUpload.css";
 
 export default function BulkUpload() {
@@ -24,14 +22,7 @@ export default function BulkUpload() {
   };
 
   return (
-
-    <>
-
-      <Sidebar />
-
-      <Header />
-
-      <div className="upload-page">
+    <div className="upload-page">
 
         <h2>Bulk Customer Upload</h2>
 
@@ -70,8 +61,6 @@ export default function BulkUpload() {
         )}
 
       </div>
-
-    </>
 
   );
 

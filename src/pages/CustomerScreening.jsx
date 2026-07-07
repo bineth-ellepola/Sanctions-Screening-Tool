@@ -1,6 +1,4 @@
 import { useState } from "react";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
 import "../styles/CustomerScreening.css";
 
 export default function CustomerScreening() {
@@ -41,11 +39,7 @@ export default function CustomerScreening() {
   };
 
   return (
-    <>
-      <Sidebar />
-      <Header />
-
-      <div className="screening-page">
+    <div className="screening-page">
 
         <h2>Customer Screening</h2>
 
@@ -135,6 +129,5 @@ export default function CustomerScreening() {
         </div>
 
       </div>
-    </>
   );
 }

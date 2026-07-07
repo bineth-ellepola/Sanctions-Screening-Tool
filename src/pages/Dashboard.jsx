@@ -1,14 +1,8 @@
-import Header from "../components/Header";
-import Sidebar from "../components/Sidebar";
 import "../styles/Dashboard.css";
 
 export default function Dashboard() {
   return (
-    <>
-      <Sidebar />
-      <Header />
-
-      <div className="dashboard">
+    <div className="dashboard">
 
         <div className="page-title">
           <h2>Dashboard</h2>
@@ -128,6 +122,5 @@ export default function Dashboard() {
         </div>
 
       </div>
-    </>
   );
 }

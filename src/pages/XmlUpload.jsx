@@ -1,6 +1,4 @@
 import { useState } from "react";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
 import "../styles/XmlUpload.css";
 
 export default function XmlUpload() {
@@ -23,11 +21,7 @@ export default function XmlUpload() {
   };
 
   return (
-    <>
-      <Sidebar />
-      <Header />
-
-      <div className="xml-page">
+    <div className="xml-page">
 
         <h2>XML Upload</h2>
 
@@ -75,6 +69,5 @@ export default function XmlUpload() {
         </div>
 
       </div>
-    </>
   );
 }

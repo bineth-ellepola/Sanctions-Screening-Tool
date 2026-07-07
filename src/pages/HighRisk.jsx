@@ -1,6 +1,4 @@
 import { useState } from "react";
-import Sidebar from "../components/Sidebar";
-import Header from "../components/Header";
 import "../styles/HighRisk.css";
 
 export default function HighRisk() {
@@ -43,11 +41,7 @@ export default function HighRisk() {
   );
 
   return (
-    <>
-      <Sidebar />
-      <Header />
-
-      <div className="highrisk-page">
+    <div className="highrisk-page">
 
         <div className="title-area">
 
@@ -151,8 +145,6 @@ export default function HighRisk() {
         </div>
 
       </div>
-
-    </>
   );
 
 }
