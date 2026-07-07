@@ -16,12 +16,7 @@ export default function Header() {
 
       <div className="header-right">
 
-        <div className="notification">
-
-          🔔
-
-        </div>
-
+       
         <div className="profile">
 
           <div className="avatar">

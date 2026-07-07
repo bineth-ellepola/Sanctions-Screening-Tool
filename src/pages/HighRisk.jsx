@@ -15,22 +15,22 @@ export default function HighRisk() {
       matched: "UN Sanctions List",
       score: "98%",
       officer: "Kasun",
-      status: "Pending"
+      status: "Blocked"
     },
     {
       id: 2,
       name: "John Fernando",
       nic: "881234567V",
-      matched: "OFAC",
+      matched: "Local Sanctions List",
       score: "95%",
       officer: "Amali",
-      status: "Under Review"
+      status: "Blocked"
     },
     {
       id: 3,
       name: "Mohamed Ali",
       nic: "900987654V",
-      matched: "EU Sanctions",
+      matched: "UN Sanctions List",
       score: "99%",
       officer: "Nuwan",
       status: "Blocked"

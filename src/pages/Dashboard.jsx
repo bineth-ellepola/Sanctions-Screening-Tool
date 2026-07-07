@@ -117,7 +117,7 @@ export default function Dashboard() {
 
                 <td>Completed</td>
 
-                <td>30/06/2026</td>
+                <td>30/09/2026</td>
 
               </tr>
 
