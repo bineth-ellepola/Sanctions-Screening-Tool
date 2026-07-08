@@ -1,5 +1,6 @@
 import { useState } from "react";
 import api from "../services/api";
+import SubjectDetailsModal from "../pages/SubjectDetailsModal";
 import "../styles/CustomerScreening.css";
 
 export default function CustomerScreening() {
@@ -12,6 +13,12 @@ export default function CustomerScreening() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [searched, setSearched] = useState(false);
+
+  // Subject details modal state
+  const [showModal, setShowModal] = useState(false);
+  const [subjectDetails, setSubjectDetails] = useState(null);
+  const [subjectLoading, setSubjectLoading] = useState(false);
+  const [subjectError, setSubjectError] = useState("");
 
   const handleChange = (e) => {
     setForm({
@@ -59,6 +66,39 @@ export default function CustomerScreening() {
     if (e.key === "Enter") {
       handleSearch();
     }
+  };
+
+  const handleRowClick = async (subjectId) => {
+    if (!subjectId) return;
+
+    setShowModal(true);
+    setSubjectLoading(true);
+    setSubjectError("");
+    setSubjectDetails(null);
+
+    try {
+      const response = await api.get(`/screening/subject/${subjectId}`);
+
+      if (response.data.success) {
+        setSubjectDetails(response.data.data);
+      } else {
+        setSubjectError(response.data.message || "Failed to load subject details.");
+      }
+    } catch (err) {
+      console.error(err);
+      setSubjectError(
+        err.response?.data?.message ||
+          "Unable to load subject details. Please try again."
+      );
+    } finally {
+      setSubjectLoading(false);
+    }
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setSubjectDetails(null);
+    setSubjectError("");
   };
 
   return (
@@ -116,7 +156,12 @@ export default function CustomerScreening() {
             )}
 
             {results.map((item, index) => (
-              <tr key={item.subjectId || index}>
+              <tr
+                key={item.subjectId || index}
+                className="clickable-row"
+                onClick={() => handleRowClick(item.subjectId)}
+                title="Click to view full subject details"
+              >
                 <td>{item.matchedName}</td>
                 <td>{item.matchedDocumentNumber}</td>
                 <td>{item.matchType}</td>
@@ -140,6 +185,15 @@ export default function CustomerScreening() {
           </tbody>
         </table>
       </div>
+
+      {showModal && (
+        <SubjectDetailsModal
+          subject={subjectDetails}
+          loading={subjectLoading}
+          error={subjectError}
+          onClose={closeModal}
+        />
+      )}
     </div>
   );
 }
