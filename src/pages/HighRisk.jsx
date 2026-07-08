@@ -45,7 +45,7 @@ export default function HighRisk() {
 
         <div className="title-area">
 
-          <h2>High Risk Customers</h2>
+          <h2>Risk Customers</h2>
 
           <p>
             Customers requiring immediate compliance review.

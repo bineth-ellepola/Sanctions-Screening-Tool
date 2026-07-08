@@ -66,14 +66,14 @@ export default function Sidebar() {
         <li>
           <NavLink to="/xml-upload" className="nav-link">
             <FaFileUpload />
-            XML Upload
+            Excel Upload
           </NavLink>
         </li>
 
         <li>
           <NavLink to="/high-risk" className="nav-link">
             <FaExclamationTriangle />
-            High Risk
+            Risk
           </NavLink>
         </li>
 

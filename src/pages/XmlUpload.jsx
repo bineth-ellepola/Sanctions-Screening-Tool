@@ -12,30 +12,30 @@ export default function XmlUpload() {
 
   const handleUpload = () => {
     if (!selectedFile) {
-      alert("Please select an XML file.");
+      alert("Please select an Excel file.");
       return;
     }
 
     // Replace this with your .NET API call later
-    setUploadStatus("XML file uploaded successfully.");
+    setUploadStatus("Excel file uploaded successfully.");
   };
 
   return (
     <div className="xml-page">
 
-        <h2>XML Upload</h2>
+        <h2>Excel Upload</h2>
 
         <div className="xml-card">
 
-          <h3>Upload Latest Sanctions XML File</h3>
+          <h3>Upload Latest Sanctions Excel File</h3>
 
           <p>
-            Select the latest sanctions XML file and upload it to the system.
+            Select the latest sanctions Excel file and upload it to the system.
           </p>
 
           <input
             type="file"
-            accept=".xml"
+            accept=".xlsx,.xls"
             onChange={handleFileChange}
           />
 
@@ -57,7 +57,7 @@ export default function XmlUpload() {
           )}
 
           <button onClick={handleUpload}>
-            Upload XML
+            Upload Excel
           </button>
 
           {uploadStatus && (
