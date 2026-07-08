@@ -137,3 +137,25 @@ tr:hover {
     margin-left: 0;
   }
 }
+
+
+.error-message {
+  background: #ffebee;
+  color: #d71945;
+  border: 1px solid #ffcdd2;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.trend-summary {
+  display: flex;
+  gap: 30px;
+  margin-top: 15px;
+  color: #666;
+  font-size: 14px;
+}
+
+.trend-summary strong {
+  color: #d71945;
+}

@@ -1,15 +1,17 @@
 import { useState } from "react";
+import api from "../services/api";
 import "../styles/CustomerScreening.css";
 
 export default function CustomerScreening() {
   const [form, setForm] = useState({
-    name: "",
-    nic: "",
-    passport: "",
-    dob: "",
+    fullName: "",
+    documentNumber: "",
   });
 
   const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [searched, setSearched] = useState(false);
 
   const handleChange = (e) => {
     setForm({
@@ -18,116 +20,126 @@ export default function CustomerScreening() {
     });
   };
 
-  const handleSearch = () => {
-    // Replace this with .NET API call later
-    setResults([
-      {
-        id: 1,
-        name: "Kasun Perera",
-        nic: "980123456V",
-        risk: "Low",
-        status: "No Match",
-      },
-      {
-        id: 2,
-        name: "Nimal Silva",
-        nic: "920654321V",
-        risk: "High",
-        status: "Potential Match",
-      },
-    ]);
+  const handleSearch = async () => {
+    if (!form.fullName && !form.documentNumber) {
+      setError("Please enter a name or document number.");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+    setSearched(true);
+
+    try {
+      const response = await api.post("/screening/customer", {
+        fullName: form.fullName,
+        documentNumber: form.documentNumber,
+        includeRawData: false,
+      });
+
+      if (response.data.success) {
+        setResults(response.data.data || []);
+      } else {
+        setError(response.data.message || "Screening request failed.");
+        setResults([]);
+      }
+    } catch (err) {
+      console.error(err);
+      setError(
+        err.response?.data?.message ||
+          "Unable to reach the screening API. Please try again."
+      );
+      setResults([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
   };
 
   return (
     <div className="screening-page">
+      <h2>Customer Screening</h2>
 
-        <h2>Customer Screening</h2>
+      <div className="screening-form">
+        <input
+          type="text"
+          name="fullName"
+          placeholder="Customer Full Name"
+          value={form.fullName}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+        />
 
-        <div className="screening-form">
+        <input
+          type="text"
+          name="documentNumber"
+          placeholder="NIC / Document Number"
+          value={form.documentNumber}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+        />
 
-          <input
-            type="text"
-            name="name"
-            placeholder="Customer Name"
-            value={form.name}
-            onChange={handleChange}
-          />
-
-          <input
-            type="text"
-            name="nic"
-            placeholder="NIC"
-            value={form.nic}
-            onChange={handleChange}
-          />
-
-          <input
-            type="text"
-            name="passport"
-            placeholder="Passport"
-            value={form.passport}
-            onChange={handleChange}
-          />
-
-          <input
-            type="date"
-            name="dob"
-            value={form.dob}
-            onChange={handleChange}
-          />
-
-          <button onClick={handleSearch}>
-            Search
-          </button>
-
-        </div>
-
-        <div className="result-table">
-
-          <table>
-
-            <thead>
-
-              <tr>
-
-                <th>Name</th>
-
-                <th>NIC</th>
-
-                <th>Risk</th>
-
-                <th>Status</th>
-
-              </tr>
-
-            </thead>
-
-            <tbody>
-
-              {results.map((item) => (
-
-                <tr key={item.id}>
-
-                  <td>{item.name}</td>
-
-                  <td>{item.nic}</td>
-
-                  <td className={item.risk.toLowerCase()}>
-                    {item.risk}
-                  </td>
-
-                  <td>{item.status}</td>
-
-                </tr>
-
-              ))}
-
-            </tbody>
-
-          </table>
-
-        </div>
-
+        <button onClick={handleSearch} disabled={loading}>
+          {loading ? "Searching..." : "Search"}
+        </button>
       </div>
+
+      {error && <div className="error-message">{error}</div>}
+
+      <div className="result-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Matched Name</th>
+              <th>Document Number</th>
+              <th>Match Type</th>
+              <th>Match Score</th>
+              <th>List Type</th>
+              <th>Subject Type</th>
+              <th>Reference No.</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {results.length === 0 && searched && !loading && (
+              <tr>
+                <td colSpan="8" style={{ textAlign: "center" }}>
+                  No matches found.
+                </td>
+              </tr>
+            )}
+
+            {results.map((item, index) => (
+              <tr key={item.subjectId || index}>
+                <td>{item.matchedName}</td>
+                <td>{item.matchedDocumentNumber}</td>
+                <td>{item.matchType}</td>
+                <td
+                  className={
+                    item.matchScore >= 90
+                      ? "high"
+                      : item.matchScore >= 60
+                      ? "medium"
+                      : "low"
+                  }
+                >
+                  {item.matchScore}%
+                </td>
+                <td>{item.listType}</td>
+                <td>{item.subjectType}</td>
+                <td>{item.referenceNumber}</td>
+                <td>{item.matchFound ? "Potential Match" : "No Match"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 }

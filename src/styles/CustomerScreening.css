@@ -101,3 +101,9 @@ color:red;
 font-weight:bold;
 
 }
+
+.result-table td.high,
+.result-table td.medium,
+.result-table td.low {
+  font-weight: bold;
+}
