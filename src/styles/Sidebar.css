@@ -24,7 +24,7 @@
 
     text-align:center;
 
-    padding:25px 15px;
+    padding:16px 15px;
 
     border-bottom:1px solid rgba(255,255,255,.15);
 
@@ -32,9 +32,9 @@
 
 .company-logo{
 
-    width:95px;
+    width:70px;
 
-    height:95px;
+    height:70px;
 
     object-fit:contain;
 
@@ -42,9 +42,9 @@
 
     border-radius:50%;
 
-    padding:8px;
+    padding:6px;
 
-    margin-bottom:15px;
+    margin-bottom:10px;
 
     box-shadow:0 5px 15px rgba(0,0,0,.25);
 
@@ -52,9 +52,9 @@
 
 .sidebar-logo h2{
 
-    font-size:24px;
+    font-size:19px;
 
-    margin-bottom:4px;
+    margin-bottom:2px;
 
     letter-spacing:1px;
 
@@ -62,7 +62,7 @@
 
 .sidebar-logo span{
 
-    font-size:13px;
+    font-size:12px;
 
     opacity:.85;
 
@@ -74,7 +74,7 @@
 
 .sidebar ul {
     list-style: none;
-    padding: 20px 0;
+    padding: 12px 0;
     margin: 0;
     flex: 1;
 }
@@ -88,14 +88,16 @@
 .nav-link {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 12px;
 
     width: 100%;
 
-    padding: 15px 25px;
+    padding: 12px 25px;
 
     text-decoration: none;
     color: white;
+
+    font-size: 14px;
 
     transition: 0.3s;
 }
@@ -118,8 +120,8 @@
 /* Icons */
 
 .nav-link svg {
-    font-size: 18px;
-    min-width: 20px;
+    font-size: 16px;
+    min-width: 18px;
 }
 
 /* ==========================
@@ -129,13 +131,15 @@
 .logout {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 12px;
 
-    padding: 18px 25px;
+    padding: 14px 25px;
 
     background: #B3123A;
 
     cursor: pointer;
+
+    font-size: 14px;
 
     transition: 0.3s;
 }

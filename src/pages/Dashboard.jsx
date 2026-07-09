@@ -4,24 +4,34 @@ import "../styles/Dashboard.css";
 
 export default function Dashboard() {
   const [summary, setSummary] = useState(null);
+  const [riskBreakdown, setRiskBreakdown] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetchSummary();
+    fetchDashboardData();
   }, []);
 
-  const fetchSummary = async () => {
+  const fetchDashboardData = async () => {
     setLoading(true);
     setError("");
 
     try {
-      const response = await api.get("/screening/dashboard/summary");
+      const [summaryRes, riskRes] = await Promise.all([
+        api.get("/screening/dashboard/summary"),
+        api.get("/screening/dashboard/risk-breakdown"),
+      ]);
 
-      if (response.data.success) {
-        setSummary(response.data.data);
+      if (summaryRes.data.success) {
+        setSummary(summaryRes.data.data);
       } else {
-        setError(response.data.message || "Failed to load dashboard summary.");
+        setError(summaryRes.data.message || "Failed to load dashboard summary.");
+      }
+
+      if (riskRes.data.success) {
+        setRiskBreakdown(riskRes.data.data || []);
+      } else {
+        setError((prev) => prev || riskRes.data.message || "Failed to load risk breakdown.");
       }
     } catch (err) {
       console.error(err);
@@ -37,6 +47,32 @@ export default function Dashboard() {
   const formatDate = (isoDate) => {
     const d = new Date(isoDate);
     return d.toLocaleDateString("en-GB"); // DD/MM/YYYY
+  };
+
+  const riskLevelClass = (riskLevel) => {
+    switch (riskLevel) {
+      case "HIGH":
+        return "high";
+      case "LOW_MEDIUM":
+        return "medium";
+      case "NO_MATCH":
+        return "low";
+      default:
+        return "";
+    }
+  };
+
+  const riskLevelLabel = (riskLevel) => {
+    switch (riskLevel) {
+      case "HIGH":
+        return "High Risk";
+      case "LOW_MEDIUM":
+        return "Low / Medium Risk";
+      case "NO_MATCH":
+        return "No Match";
+      default:
+        return riskLevel;
+    }
   };
 
   if (loading) {
@@ -57,7 +93,7 @@ export default function Dashboard() {
           <h2>Dashboard</h2>
         </div>
         <div className="error-message">{error}</div>
-        <button onClick={fetchSummary}>Retry</button>
+        <button onClick={fetchDashboardData}>Retry</button>
       </div>
     );
   }
@@ -97,6 +133,39 @@ export default function Dashboard() {
           <h1>{summary.lowRiskCountToday.toLocaleString()}</h1>
           <span>Successfully Cleared</span>
         </div>
+      </div>
+
+      {/* Risk Breakdown */}
+
+      <div className="table-card">
+        <h3>Risk Breakdown</h3>
+
+        {riskBreakdown.length === 0 ? (
+          <p style={{ color: "#888" }}>No risk breakdown data available.</p>
+        ) : (
+          <div className="risk-breakdown">
+            {riskBreakdown.map((item) => (
+              <div className="risk-breakdown-row" key={item.riskLevel}>
+                <div className="risk-breakdown-label">
+                  <span className={`risk-dot ${riskLevelClass(item.riskLevel)}`}></span>
+                  <span>{riskLevelLabel(item.riskLevel)}</span>
+                </div>
+
+                <div className="risk-breakdown-bar-track">
+                  <div
+                    className={`risk-breakdown-bar ${riskLevelClass(item.riskLevel)}`}
+                    style={{ width: `${item.percentage}%` }}
+                  ></div>
+                </div>
+
+                <div className="risk-breakdown-values">
+                  <strong>{item.count}</strong>
+                  <span>{item.percentage}%</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* 7-Day Trend */}

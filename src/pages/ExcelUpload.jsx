@@ -4,6 +4,7 @@ import "../styles/XmlUpload.css";
 
 export default function ExcelUpload() {
   const [selectedFile, setSelectedFile] = useState(null);
+  const [fileCategory, setFileCategory] = useState(null); // "entities" | "individuals" | null
   const [uploading, setUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState("");
   const [error, setError] = useState("");
@@ -12,10 +13,31 @@ export default function ExcelUpload() {
   const [xmlImportStatus, setXmlImportStatus] = useState("");
   const [xmlImportError, setXmlImportError] = useState("");
 
+  const detectFileCategory = (fileName) => {
+    const name = fileName.toLowerCase();
+    if (name.includes("entities")) return "entities";
+    if (name.includes("individuals")) return "individuals";
+    return null;
+  };
+
   const handleFileChange = (e) => {
-    setSelectedFile(e.target.files[0]);
+    const file = e.target.files[0];
+    setSelectedFile(file);
     setUploadStatus("");
     setError("");
+
+    if (file) {
+      const category = detectFileCategory(file.name);
+      setFileCategory(category);
+
+      if (!category) {
+        setError(
+          "Could not determine file type from the file name. The file name must contain either \"Entities\" or \"Individuals\" (e.g. 2026_01_06_Entities.xlsx)."
+        );
+      }
+    } else {
+      setFileCategory(null);
+    }
   };
 
   const handleUpload = async () => {
@@ -26,10 +48,21 @@ export default function ExcelUpload() {
 
     const allowedExtensions = [".xlsx", ".xls"];
     const fileName = selectedFile.name.toLowerCase();
-    const isValid = allowedExtensions.some((ext) => fileName.endsWith(ext));
+    const isValidExtension = allowedExtensions.some((ext) =>
+      fileName.endsWith(ext)
+    );
 
-    if (!isValid) {
+    if (!isValidExtension) {
       setError("Please select a valid Excel file (.xlsx or .xls).");
+      return;
+    }
+
+    const category = detectFileCategory(selectedFile.name);
+
+    if (!category) {
+      setError(
+        "Could not determine file type from the file name. The file name must contain either \"Entities\" or \"Individuals\" (e.g. 2026_01_06_Entities.xlsx)."
+      );
       return;
     }
 
@@ -40,8 +73,13 @@ export default function ExcelUpload() {
     const formData = new FormData();
     formData.append("file", selectedFile);
 
+    const endpoint =
+      category === "entities"
+        ? "/import/excel/entities"
+        : "/import/excel/individuals";
+
     try {
-      const response = await api.post("/import/excel/individuals", formData, {
+      const response = await api.post(endpoint, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -49,7 +87,8 @@ export default function ExcelUpload() {
 
       if (response.data.success) {
         setUploadStatus(
-          response.data.message || "Excel file uploaded successfully."
+          response.data.message ||
+            `Excel file (${category}) uploaded successfully.`
         );
       } else {
         setError(response.data.message || "Excel upload failed.");
@@ -105,14 +144,12 @@ export default function ExcelUpload() {
         <h3>Upload Latest Sanctions Excel File</h3>
 
         <p>
-          Select the latest sanctions Excel file and upload it to the system.
+          Select the latest sanctions Excel file (Entities or Individuals)
+          and upload it to the system. The file type is detected
+          automatically from the file name.
         </p>
 
-        <input
-          type="file"
-          accept=".xlsx,.xls"
-          onChange={handleFileChange}
-        />
+        <input type="file" accept=".xlsx,.xls" onChange={handleFileChange} />
 
         {selectedFile && (
           <div className="file-details">
@@ -130,10 +167,24 @@ export default function ExcelUpload() {
             <p>
               <strong>Type:</strong> {selectedFile.type || "N/A"}
             </p>
+
+            <p>
+              <strong>Detected Category:</strong>{" "}
+              {fileCategory ? (
+                <span className={`category-tag ${fileCategory}`}>
+                  {fileCategory === "entities" ? "Entities" : "Individuals"}
+                </span>
+              ) : (
+                <span className="category-tag unknown">Unknown</span>
+              )}
+            </p>
           </div>
         )}
 
-        <button onClick={handleUpload} disabled={uploading}>
+        <button
+          onClick={handleUpload}
+          disabled={uploading || !fileCategory}
+        >
           {uploading ? "Uploading..." : "Upload Excel"}
         </button>
 
