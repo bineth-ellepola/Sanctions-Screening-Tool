@@ -107,3 +107,12 @@ font-weight:bold;
 .result-table td.low {
   font-weight: bold;
 }
+
+.result-table tr.clickable-row {
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.result-table tr.clickable-row:hover {
+  background: #fff5f7;
+}

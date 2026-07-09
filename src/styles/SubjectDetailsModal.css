@@ -36,13 +36,18 @@
 }
 
 .modal-close {
-  background: none;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  font-size: 14px;
+  background: transparent;
   border: none;
-  font-size: 18px;
+  border-radius: 50%;
   cursor: pointer;
   color: #666;
-  padding: 4px 8px;
-  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .modal-close:hover {

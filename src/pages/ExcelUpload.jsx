@@ -8,6 +8,10 @@ export default function ExcelUpload() {
   const [uploadStatus, setUploadStatus] = useState("");
   const [error, setError] = useState("");
 
+  const [importingXml, setImportingXml] = useState(false);
+  const [xmlImportStatus, setXmlImportStatus] = useState("");
+  const [xmlImportError, setXmlImportError] = useState("");
+
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]);
     setUploadStatus("");
@@ -37,7 +41,7 @@ export default function ExcelUpload() {
     formData.append("file", selectedFile);
 
     try {
-      const response = await api.post("/import/excel", formData, {
+      const response = await api.post("/import/excel/individuals", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -64,6 +68,32 @@ export default function ExcelUpload() {
       }
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handleImportXml = async () => {
+    setImportingXml(true);
+    setXmlImportStatus("");
+    setXmlImportError("");
+
+    try {
+      const response = await api.post("/import/download");
+
+      if (response.data.success) {
+        setXmlImportStatus(
+          response.data.message || "XML import triggered successfully."
+        );
+      } else {
+        setXmlImportError(response.data.message || "XML import failed.");
+      }
+    } catch (err) {
+      console.error(err);
+      setXmlImportError(
+        err.response?.data?.message ||
+          "Unable to trigger XML import. Please try again."
+      );
+    } finally {
+      setImportingXml(false);
     }
   };
 
@@ -110,6 +140,25 @@ export default function ExcelUpload() {
         {error && <div className="error-message">{error}</div>}
 
         {uploadStatus && <div className="success-message">{uploadStatus}</div>}
+      </div>
+
+      <div className="xml-card">
+        <h3>Import XML from Configured URLs</h3>
+
+        <p>
+          Trigger an import of the latest sanctions list from the configured
+          XML source URLs.
+        </p>
+
+        <button onClick={handleImportXml} disabled={importingXml}>
+          {importingXml ? "Importing..." : "Import XML"}
+        </button>
+
+        {xmlImportError && <div className="error-message">{xmlImportError}</div>}
+
+        {xmlImportStatus && (
+          <div className="success-message">{xmlImportStatus}</div>
+        )}
       </div>
     </div>
   );

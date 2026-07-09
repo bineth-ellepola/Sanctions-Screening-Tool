@@ -144,3 +144,11 @@
   padding: 15px;
   border-radius: 8px;
 }
+
+.xml-page .xml-card {
+  margin-bottom: 25px;
+}
+
+.xml-page .xml-card:last-child {
+  margin-bottom: 0;
+}
