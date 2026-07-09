@@ -4,7 +4,7 @@ import MainLayout from "./layouts/MainLayout";
 import Dashboard from "./pages/Dashboard";
 import CustomerScreening from "./pages/CustomerScreening";
 import BulkUpload from "./pages/BulkUpload";
-import XmlUpload from "./pages/XmlUpload";
+import XmlUpload from "./pages/ExcelUpload";
 import HighRisk from "./pages/HighRisk";
 import Login from "./pages/Login";
 function App() {

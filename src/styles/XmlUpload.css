@@ -135,3 +135,12 @@
     border-radius:8px;
 
 }
+
+.error-message {
+  margin-top: 20px;
+  background: #ffebee;
+  color: #d71945;
+  border: 1px solid #ffcdd2;
+  padding: 15px;
+  border-radius: 8px;
+}
