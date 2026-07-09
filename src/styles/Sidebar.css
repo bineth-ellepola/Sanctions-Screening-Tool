@@ -151,7 +151,6 @@
 /* ==========================
    Scrollbar (Optional)
 ========================== */
-
 .sidebar::-webkit-scrollbar {
     width: 6px;
 }
