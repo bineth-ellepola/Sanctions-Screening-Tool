@@ -7,6 +7,7 @@ import BulkUpload from "./pages/BulkUpload";
 import XmlUpload from "./pages/ExcelUpload";
 import HighRisk from "./pages/HighRisk";
 import Login from "./pages/Login";
+import AuditLog from "./pages/AuditLog";
 function App() {
   return (
     <Routes>
@@ -22,6 +23,8 @@ function App() {
         <Route path="xml-upload" element={<XmlUpload />} />
 
         <Route path="high-risk" element={<HighRisk />} />
+
+        <Route path="audit-log" element={<AuditLog />} />
       </Route>
 
       <Route path="/login" element={<Login />} />

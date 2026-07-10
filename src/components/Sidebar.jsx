@@ -7,6 +7,7 @@ import {
   FaUsers,
   FaCog,
   FaExclamationTriangle,
+  FaClipboardList,
   FaSignOutAlt
 } from "react-icons/fa";
 
@@ -66,22 +67,23 @@ export default function Sidebar() {
         <li>
           <NavLink to="/xml-upload" className="nav-link">
             <FaFileUpload />
-            Excel Upload
+            XML Upload
           </NavLink>
         </li>
 
         <li>
           <NavLink to="/high-risk" className="nav-link">
             <FaExclamationTriangle />
-            Risk
+            High Risk
           </NavLink>
         </li>
 
-        
-
-        
-
-        
+        <li>
+          <NavLink to="/audit-log" className="nav-link">
+            <FaClipboardList />
+            Audit Log
+          </NavLink>
+        </li>
 
       </ul>
 
