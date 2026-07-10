@@ -212,55 +212,7 @@ export default function AuditLog() {
         <p>Search and review historical customer screening requests.</p>
       </div>
 
-      <form className="audit-filters" onSubmit={handleSearch}>
-        <input
-          type="text"
-          name="requestName"
-          placeholder="Customer Name"
-          value={filters.requestName}
-          onChange={handleChange}
-        />
-
-        <input
-          type="text"
-          name="documentNumber"
-          placeholder="Document Number"
-          value={filters.documentNumber}
-          onChange={handleChange}
-        />
-
-        <select name="riskLevel" value={filters.riskLevel} onChange={handleChange}>
-          <option value="">All Risk Levels</option>
-          <option value="HIGH">High</option>
-          <option value="MEDIUM">Medium</option>
-          <option value="LOW_MEDIUM">Low-Medium</option>
-          <option value="LOW">Low</option>
-        </select>
-
-        <select name="matchFound" value={filters.matchFound} onChange={handleChange}>
-          <option value="">Match: Any</option>
-          <option value="true">Match Found</option>
-          <option value="false">No Match</option>
-        </select>
-
-        <input
-          type="date"
-          name="fromDate"
-          value={filters.fromDate}
-          onChange={handleChange}
-        />
-
-        <input
-          type="date"
-          name="toDate"
-          value={filters.toDate}
-          onChange={handleChange}
-        />
-
-        <button type="submit">Search</button>
-        <button type="button" className="reset-btn" onClick={handleReset}>
-          Reset
-        </button>
+        <form className="filter-form" onSubmit={handleSearch}>
       </form>
 
       {error && <div className="audit-error">{error}</div>}
