@@ -1,5 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import api from "../services/api";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import "../styles/AuditLog.css";
 
 const initialFilters = {
@@ -20,8 +22,9 @@ export default function AuditLog() {
   const [totalRecords, setTotalRecords] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [pdfLoading, setPdfLoading] = useState(false);
 
-  const buildPayload = (page) => ({
+  const buildPayload = (page, size) => ({
     requestName: filters.requestName || "",
     documentNumber: filters.documentNumber || "",
     riskLevel: filters.riskLevel || "",
@@ -29,7 +32,7 @@ export default function AuditLog() {
     fromDate: filters.fromDate ? new Date(filters.fromDate).toISOString() : null,
     toDate: filters.toDate ? new Date(filters.toDate).toISOString() : null,
     pageNumber: page,
-    pageSize,
+    pageSize: size,
   });
 
   const fetchAuditLogs = useCallback(async (page = 1) => {
@@ -37,7 +40,7 @@ export default function AuditLog() {
     setError("");
 
     try {
-      const response = await api.post("/screening/audit/search", buildPayload(page));
+      const response = await api.post("/screening/audit/search", buildPayload(page, pageSize));
       const data = response.data?.data;
 
       setItems(data?.items || []);
@@ -87,6 +90,119 @@ export default function AuditLog() {
   const riskClass = (risk) => {
     if (!risk) return "";
     return risk.toLowerCase().replace("_", "-");
+  };
+
+  // Fetches every matching record (across all pages) using the current filters,
+  // then builds the PDF from the complete result set.
+  const fetchAllMatchingRecords = async () => {
+    // First call to find out how many total records exist
+    const firstResponse = await api.post(
+      "/screening/audit/search",
+      buildPayload(1, 1)
+    );
+    const total = firstResponse.data?.data?.totalRecords || 0;
+
+    if (total === 0) return [];
+
+    // Second call requesting all records in a single page
+    const fullResponse = await api.post(
+      "/screening/audit/search",
+      buildPayload(1, total)
+    );
+
+    return fullResponse.data?.data?.items || [];
+  };
+
+  const handleDownloadPdf = async () => {
+    setPdfLoading(true);
+    setError("");
+
+    try {
+      const allItems = await fetchAllMatchingRecords();
+
+      if (allItems.length === 0) {
+        setError("No records available to export.");
+        return;
+      }
+
+      const doc = new jsPDF({ orientation: "landscape" });
+
+      doc.setFontSize(14);
+      doc.setTextColor(215, 25, 69);
+      doc.text("SEJAYA Micro Credit Ltd - Screening Audit Log", 14, 15);
+
+      doc.setFontSize(10);
+      doc.setTextColor(100);
+      doc.text(
+        `Generated on: ${new Date().toLocaleString()}   |   Total Records: ${allItems.length}`,
+        14,
+        22
+      );
+
+      // Show applied filters, if any, under the header
+      const activeFilters = [];
+      if (filters.requestName) activeFilters.push(`Name: ${filters.requestName}`);
+      if (filters.documentNumber) activeFilters.push(`Document: ${filters.documentNumber}`);
+      if (filters.riskLevel) activeFilters.push(`Risk: ${filters.riskLevel}`);
+      if (filters.matchFound) activeFilters.push(`Match: ${filters.matchFound === "true" ? "Yes" : "No"}`);
+      if (filters.fromDate) activeFilters.push(`From: ${filters.fromDate}`);
+      if (filters.toDate) activeFilters.push(`To: ${filters.toDate}`);
+
+      let startY = 28;
+      if (activeFilters.length > 0) {
+        doc.setFontSize(9);
+        doc.text(`Filters: ${activeFilters.join(" | ")}`, 14, 28);
+        startY = 34;
+      }
+
+      autoTable(doc, {
+        startY,
+        head: [[
+          "ID",
+          "Customer Name",
+          "Document No.",
+          "Match",
+          "Score",
+          "Risk Level",
+          "Recommended Action",
+          "Requested By",
+          "Request IP",
+          "Screened On",
+        ]],
+        body: allItems.map((item) => [
+          item.id,
+          item.requestName || "-",
+          item.requestDocumentNumber || "-",
+          item.matchFound ? "Yes" : "No",
+          item.highestScore ?? "-",
+          item.riskLevel || "-",
+          item.recommendedAction || "-",
+          item.requestedBy || "-",
+          item.requestIp || "-",
+          formatDate(item.screenedOn),
+        ]),
+        headStyles: { fillColor: [215, 25, 69], textColor: 255 },
+        styles: { fontSize: 8, cellPadding: 3 },
+        alternateRowStyles: { fillColor: [250, 250, 250] },
+        didDrawPage: (data) => {
+          const pageCount = doc.internal.getNumberOfPages();
+          doc.setFontSize(8);
+          doc.setTextColor(150);
+          doc.text(
+            `Page ${doc.internal.getCurrentPageInfo().pageNumber} of ${pageCount}`,
+            data.settings.margin.left,
+            doc.internal.pageSize.getHeight() - 8
+          );
+        },
+      });
+
+      doc.save(`audit-log-full-${new Date().toISOString().slice(0, 10)}.pdf`);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to generate PDF. Please try again.");
+    } finally {
+      setPdfLoading(false);
+    }
   };
 
   return (
@@ -152,7 +268,16 @@ export default function AuditLog() {
       <div className="table-container">
         <div className="table-header-row">
           <h3>Audit Records</h3>
-          <span>{totalRecords} total record{totalRecords === 1 ? "" : "s"}</span>
+          <div className="table-header-actions">
+            <span>{totalRecords} total record{totalRecords === 1 ? "" : "s"}</span>
+            <button
+              className="pdf-btn"
+              onClick={handleDownloadPdf}
+              disabled={pdfLoading || totalRecords === 0}
+            >
+              {pdfLoading ? "Preparing PDF..." : "Download PDF"}
+            </button>
+          </div>
         </div>
 
         <table>

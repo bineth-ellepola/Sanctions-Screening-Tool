@@ -187,3 +187,31 @@ tr:hover {
     grid-template-columns: 1fr;
   }
 }
+
+
+.table-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.pdf-btn {
+  background: #d71945;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.pdf-btn:hover:not(:disabled) {
+  background: #b3123a;
+}
+
+.pdf-btn:disabled {
+  background: #e0b3bd;
+  cursor: not-allowed;
+}
