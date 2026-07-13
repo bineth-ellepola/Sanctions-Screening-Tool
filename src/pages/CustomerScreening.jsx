@@ -1,7 +1,39 @@
 import { useState } from "react";
+import { FaInfoCircle, FaTimes } from "react-icons/fa";
 import api from "../services/api";
 import SubjectDetailsModal from "../pages/SubjectDetailsModal";
 import "../styles/CustomerScreening.css";
+
+const riskLevelInfo = [
+  {
+    level: "HIGH",
+    className: "high",
+    meaning: "Strong match found. Very likely the same person/entity as a listed sanctions subject.",
+    action: "Block & Escalate",
+    actionDetail: "Stop onboarding immediately and escalate to compliance.",
+  },
+  {
+    level: "MEDIUM",
+    className: "medium",
+    meaning: "Possible match. Some identifying details align but it isn't a strong or confirmed match.",
+    action: "Escalate for Review",
+    actionDetail: "Send to compliance for further review before proceeding.",
+  },
+  {
+    level: "LOW_MEDIUM",
+    className: "low-medium",
+    meaning: "Weak match. Limited overlap in name/document details with a listed subject.",
+    action: "Manual Review",
+    actionDetail: "A staff member should manually check the details before deciding.",
+  },
+  {
+    level: "LOW",
+    className: "low",
+    meaning: "No significant match, or only a low-confidence match was found.",
+    action: "Proceed (with caution)",
+    actionDetail: "Onboarding/processing can continue, taking note of the caution flag if shown.",
+  },
+];
 
 export default function CustomerScreening() {
   const [form, setForm] = useState({
@@ -19,6 +51,9 @@ export default function CustomerScreening() {
   const [subjectDetails, setSubjectDetails] = useState(null);
   const [subjectLoading, setSubjectLoading] = useState(false);
   const [subjectError, setSubjectError] = useState("");
+
+  // Risk level info popover state
+  const [showRiskInfo, setShowRiskInfo] = useState(false);
 
   const handleChange = (e) => {
     setForm({
@@ -103,7 +138,55 @@ export default function CustomerScreening() {
 
   return (
     <div className="screening-page">
-      <h2>Customer Screening</h2>
+      <div className="title-row">
+        <h2>Customer Screening</h2>
+        <button
+          type="button"
+          className="info-btn"
+          onClick={() => setShowRiskInfo(true)}
+          title="What do the risk levels mean?"
+          aria-label="Risk level information"
+        >
+          <FaInfoCircle />
+        </button>
+      </div>
+
+      {showRiskInfo && (
+        <div className="risk-info-overlay" onClick={() => setShowRiskInfo(false)}>
+          <div className="risk-info-card" onClick={(e) => e.stopPropagation()}>
+            <div className="risk-info-header">
+              <h3>Understanding Risk Levels</h3>
+              <button
+                type="button"
+                className="risk-info-close"
+                onClick={() => setShowRiskInfo(false)}
+                aria-label="Close"
+              >
+                <FaTimes />
+              </button>
+            </div>
+
+            <p className="risk-info-intro">
+              Each screened record is assigned a risk level based on how closely it matches
+              an entry on a sanctions list. Here's what each level means and what action is recommended.
+            </p>
+
+            <div className="risk-info-list">
+              {riskLevelInfo.map((r) => (
+                <div className="risk-info-row" key={r.level}>
+                  <span className={`risk-badge ${r.className}`}>{r.level.replace("_", "-")}</span>
+                  <div className="risk-info-text">
+                    <p className="risk-info-meaning">{r.meaning}</p>
+                    <p className="risk-info-action">
+                      <strong>Recommended action:</strong> {r.action} — {r.actionDetail}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="screening-form">
         <input

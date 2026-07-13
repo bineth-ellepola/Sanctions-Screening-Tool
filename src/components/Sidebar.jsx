@@ -74,7 +74,7 @@ export default function Sidebar() {
         <li>
           <NavLink to="/high-risk" className="nav-link">
             <FaExclamationTriangle />
-            High Risk
+            Risk Screening Records
           </NavLink>
         </li>
 

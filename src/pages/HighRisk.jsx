@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { FaInfoCircle, FaTimes } from "react-icons/fa";
 import api from "../services/api";
 import "../styles/HighRisk.css";
 
@@ -11,6 +12,37 @@ const initialFilters = {
   toDate: "",
 };
 
+const riskLevelInfo = [
+  {
+    level: "HIGH",
+    className: "high",
+    meaning: "Strong match found. Very likely the same person/entity as a listed sanctions subject.",
+    action: "Block & Escalate",
+    actionDetail: "Stop onboarding immediately and escalate to compliance.",
+  },
+  {
+    level: "MEDIUM",
+    className: "medium",
+    meaning: "Possible match. Some identifying details align but it isn't a strong or confirmed match.",
+    action: "Escalate for Review",
+    actionDetail: "Send to compliance for further review before proceeding.",
+  },
+  {
+    level: "LOW_MEDIUM",
+    className: "low-medium",
+    meaning: "Weak match. Limited overlap in name/document details with a listed subject.",
+    action: "Manual Review",
+    actionDetail: "A staff member should manually check the details before deciding.",
+  },
+  {
+    level: "LOW",
+    className: "low",
+    meaning: "No significant match, or only a low-confidence match was found.",
+    action: "Proceed (with caution)",
+    actionDetail: "Onboarding/processing can continue, taking note of the caution flag if shown.",
+  },
+];
+
 export default function HighRisk() {
   const [filters, setFilters] = useState(initialFilters);
   const [items, setItems] = useState([]);
@@ -20,6 +52,7 @@ export default function HighRisk() {
   const [totalRecords, setTotalRecords] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showRiskInfo, setShowRiskInfo] = useState(false);
 
   const buildPayload = (page) => ({
     requestName: filters.requestName || "",
@@ -92,9 +125,57 @@ export default function HighRisk() {
     <div className="highrisk-page">
 
       <div className="title-area">
-        <h2>Risk Screening Records</h2>
+        <div className="title-row">
+          <h2>Risk Screening Records</h2>
+          <button
+            type="button"
+            className="info-btn"
+            onClick={() => setShowRiskInfo(true)}
+            title="What do the risk levels mean?"
+            aria-label="Risk level information"
+          >
+            <FaInfoCircle />
+          </button>
+        </div>
         <p>Complete audit log of screened customers, filterable by risk level, match status, and date.</p>
       </div>
+
+      {showRiskInfo && (
+        <div className="risk-info-overlay" onClick={() => setShowRiskInfo(false)}>
+          <div className="risk-info-card" onClick={(e) => e.stopPropagation()}>
+            <div className="risk-info-header">
+              <h3>Understanding Risk Levels</h3>
+              <button
+                type="button"
+                className="risk-info-close"
+                onClick={() => setShowRiskInfo(false)}
+                aria-label="Close"
+              >
+                <FaTimes />
+              </button>
+            </div>
+
+            <p className="risk-info-intro">
+              Each screened record is assigned a risk level based on how closely it matches
+              an entry on a sanctions list. Here's what each level means and what action is recommended.
+            </p>
+
+            <div className="risk-info-list">
+              {riskLevelInfo.map((r) => (
+                <div className="risk-info-row" key={r.level}>
+                  <span className={`risk-badge ${r.className}`}>{r.level.replace("_", "-")}</span>
+                  <div className="risk-info-text">
+                    <p className="risk-info-meaning">{r.meaning}</p>
+                    <p className="risk-info-action">
+                      <strong>Recommended action:</strong> {r.action} — {r.actionDetail}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       <form className="highrisk-filters" onSubmit={handleSearch}>
         <input
@@ -166,12 +247,12 @@ export default function HighRisk() {
                 <th>Document Number</th>
                 <th>Match Found</th>
                 <th>Match Score</th>
-                
+
                 <th>Risk Level</th>
-                
-                
+
+
                 <th>Requested By</th>
-                
+
                 <th>Screened On</th>
               </tr>
             </thead>
@@ -211,7 +292,7 @@ export default function HighRisk() {
                       </span>
                     </td>
 
-                  
+
 
                     <td>
                       <span className={`risk-badge ${riskClass(item.riskLevel)}`}>
@@ -219,13 +300,12 @@ export default function HighRisk() {
                       </span>
                     </td>
 
-                    
 
-                    
+
 
                     <td>{item.requestedBy || "-"}</td>
 
-                    
+
 
                     <td>{formatDate(item.screenedOn)}</td>
 
